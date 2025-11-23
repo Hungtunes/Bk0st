@@ -178,6 +178,7 @@ button:active {
         <option value="qid_to_id"> [QID:ID] thành List ID</option>
         <option value="wordCount">Đếm số câu trả lời</option>
         <option value="sort"> Lọc đề cuối kỳ</option>
+        <option value="qV"> Tách câu hỏi Tiếng Việt </option>
     </select>
 
     <h3>Input</h3>
@@ -344,6 +345,65 @@ function sort(inputText) {
     return sortedData.map(parse).join('\n');
 }
 
+function strokeQuestionV(inputText) {
+    // 1. Tách chuỗi đầu vào thành mảng các dòng
+    // Split bằng \n và xử lý \r (nếu có) trong vòng lặp
+    const lines = inputText.split('\n');
+    
+    let topic = "";
+    let num = 1;
+    const results = [];
+
+    for (let rawLine of lines) {
+        // 2. Logic trim_left: Xóa khoảng trắng đầu dòng và \r cuối dòng (do split \n để lại)
+        let line = rawLine.trimStart().replace(/\r$/, '');
+
+        // 3. Điều kiện dừng giống C++
+        if (line === "***") break;
+
+        // 4. Bỏ qua dòng trống
+        if (line.length === 0) continue;
+
+        // 5. Xử lý dòng bắt đầu bằng "Bài" (Topic detection)
+        // C++: if (trimmed.rfind("Bài", 0) == 0)
+        if (line.startsWith("Bài")) {
+            const dotPos = line.indexOf('.');
+            if (dotPos !== -1 && dotPos + 1 < line.length) {
+                // Lấy phần sau dấu chấm và trim
+                topic = line.substring(dotPos + 1).trimStart();
+            } else {
+                topic = "";
+            }
+            // Continue để không in dòng này ra thành câu hỏi
+            continue;
+        }
+
+        // 6. Xử lý dấu đóng ngoặc ')' ở đầu (a), b), 1), ...)
+        // C++: size_t p = trimmed.find(')'); if (p != npos && p <= 3)
+        const p = line.indexOf(')');
+        if (p !== -1 && p <= 3) {
+            // Cắt bỏ phần chỉ mục (a, b, 1...) và trim lại phần nội dung
+            if (p + 1 < line.length) {
+                line = line.substring(p + 1).trimStart();
+            } else {
+                line = "";
+            }
+        }
+
+        // 7. Tạo chuỗi kết quả
+        // Logic: "Câu " + num + ":" + (topic ?) + (content ?)
+        let out = `Câu ${num}:`;
+        if (topic) out += ` ${topic}`;
+        if (line)  out += ` ${line}`;
+
+        results.push(out);
+        num++;
+    }
+
+    // Nối các dòng kết quả lại
+    return results.join('\n');
+}
+
 // =========================
 // CHẠY CHƯƠNG TRÌNH
 // =========================
@@ -357,6 +417,7 @@ function runFunction() {
         case "qid_to_id":  output = program_qid_to_id(input); break;
         case "wordCount":  output = program_wordCount(input); break;
         case "sort": output = sort(input); break;
+        case "qV": output = strokeQuestionV(input); break;
         default: output = "Chức năng chưa được cài đặt.";
     }
 
