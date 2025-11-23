@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Công cụ tổng hợp các chương trình C++</title>
+<style>
+    :root {
+    /* Bảng màu hiện đại (Violet/Indigo Gradient) */
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    --primary-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39);
+    
+    /* Màu nền & text */
+    --bg-body: #f3f4f6;       /* Xám rất nhạt */
+    --bg-panel-left: #ffffff; /* Trắng tinh khôi */
+    --bg-panel-right: #f8fafc;/* Xám xanh nhạt phân biệt vùng kết quả */
+    
+    --text-main: #1e293b;
+    --text-secondary: #64748b;
+    --border-subtle: #e2e8f0;
+    
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Animation mượt hơn */
+}
+
+/* Reset & Typography chuẩn */
+body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif; /* Ưu tiên font Inter nếu có */
+    color: var(--text-main);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased; /* Chữ sắc nét hơn trên Mac/iOS */
+}
+
+/* --- TÙY CHỈNH THANH CUỘN (SCROLLBAR) --- */
+/* Giúp giao diện trông "Pro" hơn hẳn */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* --- BỐ CỤC --- */
+.left, .right {
+    width: 50%;
+    padding: 40px; /* Tăng khoảng cách để thoáng hơn */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: relative;
+}
+
+.left {
+    background-color: var(--bg-panel-left);
+    border-right: 1px solid var(--border-subtle);
+    z-index: 2; /* Để đổ bóng lên phần bên phải nếu cần */
+}
+
+.right {
+    background-color: var(--bg-panel-right);
+}
+
+/* --- INPUT & OUTPUT --- */
+textarea, select, #output {
+    width: 100%;
+    padding: 20px;
+    font-size: 15px;
+    font-family: 'JetBrains Mono', 'Consolas', monospace; /* Font code cho dễ nhìn */
+    line-height: 1.6;
+    border: 1px solid transparent; /* Ẩn viền mặc định */
+    border-radius: var(--radius-md);
+    background-color: #f1f5f9; /* Nền input tối hơn nền trắng một chút */
+    color: var(--text-main);
+    transition: var(--transition);
+    outline: none;
+    resize: none;
+    box-sizing: border-box;
+}
+
+/* Textarea bên trái: Nền trắng, có viền nhẹ */
+.left textarea, .left select {
+    background-color: #fff;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
+
+/* Hiệu ứng khi Focus cực mượt */
+textarea:focus, select:focus {
+    background-color: #fff;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); /* Vòng sáng nhẹ */
+    transform: translateY(-2px); /* Nhấc nhẹ lên */
+}
+
+textarea {
+    flex-grow: 1;
+    min-height: 300px;
+}
+
+/* Phần Output bên phải */
+#output {
+    background-color: #fff;
+    border: 1px solid var(--border-subtle);
+    color: #334155;
+    overflow-y: auto;
+    cursor: text; /* Con trỏ chuột dạng văn bản */
+}
+
+/* --- NÚT BẤM (BUTTON) --- */
+button {
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: white;
+    background: var(--primary-gradient); /* Dùng Gradient */
+    border: none;
+    border-radius: 50px; /* Nút hình viên thuốc (Pill shape) */
+    cursor: pointer;
+    box-shadow: var(--primary-shadow);
+    transition: var(--transition);
+    align-self: flex-start;
+    text-transform: uppercase; /* Chữ in hoa tạo điểm nhấn */
+    font-size: 14px;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6); /* Bóng đậm hơn khi hover */
+    filter: brightness(1.1);
+}
+
+button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+        height: auto;
+        overflow-y: auto; /* Cho phép cuộn trang trên mobile */
+    }
+    .left, .right {
+        width: 100%;
+        padding: 20px;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+    textarea {
+        min-height: 200px; /* Giảm chiều cao trên mobile */
+    }
+}
+</style>
+
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="left">
+    <h2>Chọn chức năng</h2>
+    <select id="functionSelect">
+        <option value="id_to_qid"> List ID thành [QID:ID]</option>
+        <option value="qid_to_id"> [QID:ID] thành List ID</option>
+        <option value="wordCount">Đếm số câu trả lời</option>
+        <option value="sort"> Lọc đề cuối kỳ</option>
+    </select>
+
+    <h3>Input</h3>
+    <textarea id="input"></textarea>
+
+    <br><br>
+    <button onclick="runFunction()">RUN</button>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right">
+    <h2>Output</h2>
+
+    <!-- NÚT COPY -->
+    <button onclick="copyOutput()" style="margin-bottom:10px;">COPY OUTPUT</button>
+
+    <div id="output" 
+         style="white-space: pre-wrap; border:1px solid #ccc; padding:10px;">
+    </div>
+</div>
+
+<script>
+// =========================
+// TẬP HỢP CÁC CHƯƠNG TRÌNH
+// =========================
+
+function program_id_to_qid(inputText) {
+    const tokens = inputText.trim().split(/\s+/);
+    const numbers = tokens.filter(t => /^-?\d+$/.test(t));
+    return numbers.map(num => `[QID:${num}]`).join("\n");
+}
+
+function program_qid_to_id(inputText) {
+    const lines = inputText.split(/\r?\n/);
+    let result = [];
+
+    for (let line of lines) {
+        if (line.trim() === "") continue;
+        let digits = "";
+        for (let c of line) {
+            if (/[0-9]/.test(c)) digits += c;
+        }
+        result.push(digits);
+    }
+    return result.join("\n");
+}
+
+function program_wordCount(inputText) {
+    // 1. Tách chuỗi thành 2 phần: HTML và Danh sách ID
+    // Sử dụng split với giới hạn là 2 để tránh lỗi nếu trong HTML vô tình có ###
+    const parts = inputText.split('###');
+    
+    // Nếu không tìm thấy dấu phân cách, báo lỗi hoặc xử lý mặc định
+    if (parts.length < 2) {
+        return "Lỗi: Không tìm thấy dấu ngăn cách '###' giữa HTML và danh sách ID.";
+    }
+
+    const htmlContent = parts[0];
+    const idListString = parts[1];
+
+    // 2. Phân tích HTML để lấy dữ liệu (ID -> Số bài giải)
+    const dataMap = {};
+    const idRegex = /ID:\s*(\d+)/g;
+    const countRegex = /Xem giải\s*\((\d+)\)/g;
+
+    let idMatch;
+    
+    // Logic tương tự C++: Tìm ID trước, sau đó tìm "Xem giải" gần nhất phía sau
+    while ((idMatch = idRegex.exec(htmlContent)) !== null) {
+        const id = parseInt(idMatch[1]);
+        
+        // Đặt vị trí bắt đầu tìm kiếm cho countRegex là ngay sau vị trí ID vừa tìm thấy
+        countRegex.lastIndex = idRegex.lastIndex;
+        
+        const countMatch = countRegex.exec(htmlContent);
+
+        if (countMatch) {
+            dataMap[id] = parseInt(countMatch[1]);
+            
+            // Cập nhật vị trí tìm kiếm tiếp theo cho idRegex để tránh lặp lại
+            // Bắt đầu tìm ID tiếp theo SAU chữ "Xem giải"
+            idRegex.lastIndex = countRegex.lastIndex;
+        } else {
+            break; // Tìm thấy ID nhưng không thấy "Xem giải" phía sau -> Dừng
+        }
+    }
+
+    // 3. Phân tích danh sách ID cần tra cứu (Lọc lấy tất cả các số từ phần dưới ###)
+    // match(/\d+/g) sẽ lấy toàn bộ các số, bất kể xuống dòng hay dấu cách
+    const queryIds = idListString.match(/\d+/g); 
+
+    if (!queryIds || queryIds.length === 0) {
+        return "Không có ID nào được nhập để kiểm tra.";
+    }
+
+    // 4. Tổng hợp kết quả
+    let resultLog = "";
+    let notSolvedCount = 0;
+    const totalQueries = queryIds.length;
+
+    queryIds.forEach(idStr => {
+        const id = parseInt(idStr);
+        const count = dataMap[id] || 0; // Nếu không tìm thấy trong HTML thì là 0
+
+        if (count === 0) notSolvedCount++;
+        
+        resultLog += `${id} - ${count}\n`;
+    });
+
+    const solvedCount = totalQueries - notSolvedCount;
+
+    resultLog += `Đã giải: ${solvedCount}\n`;
+    resultLog += `Chưa giải: ${notSolvedCount}`;
+
+    return resultLog;
+}
+
+function sort(inputText) {
+    // 1. Định nghĩa Map (tương đương unordered_map trong C++)
+    const mp = {
+        "ct": "CTTT",
+        "n1": "NN1",
+        "n2": "NN2",
+        "n3": "NN3",
+        "ds": "Đại số",
+        "g1": "Giải tích 1"
+    };
+
+    // 2. Xử lý đầu vào: Tách chuỗi dựa trên khoảng trắng hoặc xuống dòng (mô phỏng cin >> s)
+    const tokens = inputText.trim().split(/\s+/);
+
+    // 3. Dùng Set để lưu trữ và loại bỏ trùng lặp
+    const uniqueData = new Set();
+
+    for (let s of tokens) {
+        if (s === "#") break; // Điều kiện dừng nhập
+        uniqueData.add(s);
+    }
+
+    // 4. Chuyển Set thành Array và sắp xếp (mô phỏng tính chất sort của std::set)
+    const sortedData = Array.from(uniqueData).sort();
+
+    // 5. Hàm xử lý logic parse
+    const parse = (code) => {
+        const parts = code.split('-');
+        if (parts.length !== 4) return "Mã không hợp lệ";
+
+        // Map dữ liệu
+        const ct = mp[parts[0]] || parts[0];
+        const mon = mp[parts[1]] || parts[1];
+
+        // Format năm: xxxxx -> xxxx.x
+        const yearRaw = parts[2];
+        const year = yearRaw.slice(0, -1) + "." + yearRaw.slice(-1);
+
+        // Format đề: xx -> Đề n (parseInt tự bỏ số 0 ở đầu)
+        const deNum = parseInt(parts[3], 10);
+        const de = "Đề " + deNum;
+
+        return `${ct} - (${mon}) - (Cuối kỳ) ${de} - ${year}`;
+    };
+
+    // 6. Map dữ liệu đã sắp xếp qua hàm parse và nối lại thành chuỗi kết quả
+    return sortedData.map(parse).join('\n');
+}
+
+// =========================
+// CHẠY CHƯƠNG TRÌNH
+// =========================
+function runFunction() {
+    const func = document.getElementById("functionSelect").value;
+    const input = document.getElementById("input").value;
+    let output = "";
+
+    switch (func) {
+        case "id_to_qid":  output = program_id_to_qid(input); break;
+        case "qid_to_id":  output = program_qid_to_id(input); break;
+        case "wordCount":  output = program_wordCount(input); break;
+        case "sort": output = sort(input); break;
+        default: output = "Chức năng chưa được cài đặt.";
+    }
+
+    document.getElementById("output").textContent = output;
+}
+
+// =========================
+// COPY OUTPUT
+// =========================
+function copyOutput() {
+    const text = document.getElementById("output").textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Đã copy vào clipboard!");
+    });
+}
+</script>
+
+</body>
+</html>
