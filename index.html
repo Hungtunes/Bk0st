@@ -366,7 +366,7 @@ function strokeQuestionV(inputText) {
 
         // 5. Xử lý dòng bắt đầu bằng "Bài" (Topic detection)
         // C++: if (trimmed.rfind("Bài", 0) == 0)
-        if (line.startsWith("Bài")) {
+        if (line.startsWith("Bài") || line.startsWith("Exercise")) {
             const dotPos = line.indexOf('.');
             if (dotPos !== -1 && dotPos + 1 < line.length) {
                 // Lấy phần sau dấu chấm và trim
