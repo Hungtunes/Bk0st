@@ -3,28 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Công cụ tổng hợp các chương trình C++</title>
+<title>Công cụ tổng hợp & Biên tập Exam</title>
 <style>
     :root {
-        /* Bảng màu hiện đại (Violet/Indigo Gradient) */
         --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
         --primary-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39);
-        
-        /* Màu nền & text */
         --bg-body: #f3f4f6;       
         --bg-panel-left: #ffffff; 
         --bg-panel-right: #f8fafc;
-        
         --text-main: #1e293b;
         --text-secondary: #64748b;
         --border-subtle: #e2e8f0;
-        
         --radius-lg: 16px;
         --radius-md: 10px;
         --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Reset & Typography chuẩn */
     body {
         margin: 0;
         font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -32,26 +26,8 @@
         display: flex;
         height: 100vh;
         overflow: hidden;
-        -webkit-font-smoothing: antialiased;
     }
 
-    /* --- TÙY CHỈNH THANH CUỘN (SCROLLBAR) --- */
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
-    }
-
-    /* --- BỐ CỤC --- */
     .left, .right {
         width: 50%;
         padding: 40px;
@@ -62,26 +38,18 @@
         position: relative;
     }
 
-    .left {
-        background-color: var(--bg-panel-left);
-        border-right: 1px solid var(--border-subtle);
-        z-index: 2;
-    }
+    .left { background-color: var(--bg-panel-left); border-right: 1px solid var(--border-subtle); z-index: 2; }
+    .right { background-color: var(--bg-panel-right); }
 
-    .right {
-        background-color: var(--bg-panel-right);
-    }
-
-    /* --- INPUT & OUTPUT --- */
     textarea, select, #output {
         width: 100%;
         padding: 20px;
-        font-size: 15px;
+        font-size: 14px;
         font-family: 'JetBrains Mono', 'Consolas', monospace;
         line-height: 1.6;
-        border: 1px solid transparent;
+        border: 1px solid var(--border-subtle);
         border-radius: var(--radius-md);
-        background-color: #f1f5f9;
+        background-color: #fff;
         color: var(--text-main);
         transition: var(--transition);
         outline: none;
@@ -89,101 +57,31 @@
         box-sizing: border-box;
     }
 
-    .left textarea, .left select {
-        background-color: #fff;
-        border: 1px solid var(--border-subtle);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-    }
+    textarea:focus { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+    textarea { flex-grow: 1; }
+    #output { background-color: #fff; overflow-y: auto; flex-grow: 1; white-space: pre-wrap; }
 
-    textarea:focus, select:focus {
-        background-color: #fff;
-        border-color: #6366f1;
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        transform: translateY(-2px);
-    }
-
-    textarea {
-        flex-grow: 1;
-        min-height: 250px;
-    }
-
-    #output {
-        background-color: #fff;
-        border: 1px solid var(--border-subtle);
-        color: #334155;
-        overflow-y: auto;
-        cursor: text;
-        flex-grow: 1;
-    }
-
-    /* --- KHUNG HƯỚNG DẪN (GUIDE BOX) --- */
     .guide-box {
-        background-color: #e0e7ff; 
-        color: #3730a3; 
-        padding: 14px 18px;
-        border-radius: var(--radius-md);
-        font-size: 13.5px;
-        line-height: 1.6;
-        border-left: 4px solid #6366f1;
-        transition: var(--transition);
-        display: none; 
+        background-color: #e0e7ff; color: #3730a3; padding: 14px 18px;
+        border-radius: var(--radius-md); font-size: 13px; line-height: 1.5;
+        border-left: 4px solid #6366f1; display: none; 
     }
 
-    .fade-in {
-        animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-5px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* --- NÚT BẤM (BUTTON) --- */
+    .btn-group { display: flex; gap: 10px; }
+    
     button {
-        padding: 14px 32px;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        color: white;
-        background: var(--primary-gradient);
-        border: none;
-        border-radius: 50px;
-        cursor: pointer;
-        box-shadow: var(--primary-shadow);
-        transition: var(--transition);
-        align-self: flex-start;
-        text-transform: uppercase;
-        font-size: 14px;
+        padding: 12px 24px; font-weight: 600; color: white;
+        background: var(--primary-gradient); border: none;
+        border-radius: 50px; cursor: pointer; box-shadow: var(--primary-shadow);
+        transition: var(--transition); font-size: 13px; text-transform: uppercase;
     }
 
-    button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
-        filter: brightness(1.1);
-    }
+    button:hover { transform: translateY(-2px); filter: brightness(1.1); }
+    
+    .btn-send { background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.39); }
 
-    button:active {
-        transform: translateY(1px);
-        box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4);
-    }
-
-    /* --- RESPONSIVE --- */
-    @media (max-width: 768px) {
-        body {
-            flex-direction: column;
-            height: auto;
-            overflow-y: auto;
-        }
-        .left, .right {
-            width: 100%;
-            padding: 20px;
-            height: auto;
-            border-right: none;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-        textarea, #output {
-            min-height: 200px;
-        }
-    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.4s ease; }
 </style>
 </head>
 <body>
@@ -192,6 +90,7 @@
     <h2 style="margin: 0;">Chọn chức năng</h2>
     <select id="functionSelect" onchange="updateGuide()">
         <option value="" disabled selected>-- Vui lòng chọn một công cụ --</option>
+        <option value="edit_exam">Sửa bài thi (cURL to Tag)</option>
         <option value="id_to_qid">List ID thành [QID:ID]</option>
         <option value="qid_to_id">[QID:ID] thành List ID</option>
         <option value="wordCount">Đếm số câu trả lời</option>
@@ -203,343 +102,204 @@
     <div id="guideBox" class="guide-box"></div>
 
     <h3 style="margin: 0;">Input</h3>
-    <textarea id="input" placeholder="Vui lòng chọn chức năng ở trên để xem hướng dẫn nhập liệu..."></textarea>
+    <textarea id="input" placeholder="Chọn chức năng để xem hướng dẫn..."></textarea>
 
-    <button onclick="runFunction()">RUN</button>
+    <div class="btn-group">
+        <button onclick="runFunction()">RUN (Parse)</button>
+    </div>
 </div>
 
 <div class="right">
-    <h2 style="margin: 0;">Output</h2>
+    <h2 style="margin: 0;">Output / Control</h2>
 
-    <button onclick="copyOutput()" style="margin-bottom: 0;">COPY OUTPUT</button>
+    <div class="btn-group">
+        <button onclick="copyOutput()">COPY OUTPUT</button>
+        <button id="btnSendApi" class="btn-send" style="display: none;" onclick="sendExamUpdate()">🚀 GỬI API LÊN SERVER</button>
+    </div>
 
-    <div id="output" style="white-space: pre-wrap;"></div>
+    <div id="output"></div>
 </div>
 
 <script>
-// =========================
-// DATA HƯỚNG DẪN SỬ DỤNG
-// =========================
+// Biến toàn cục lưu cấu trúc API
+let globalContext = { url: "", token: "", exam_id: null, templates: {} };
+
 const guides = {
-    "id_to_qid": {
-        text: "<b>Hướng dẫn:</b> Nhập một danh sách các số ID (cách nhau bởi khoảng trắng hoặc xuống dòng). Các ký tự không phải số nguyên sẽ bị bỏ qua.",
-        placeholder: "Ví dụ:\n12345\n67890\nabc (sẽ bị bỏ qua)"
+    "edit_exam": {
+        text: "<b>Hướng dẫn:</b> 1. Dán cURL từ trình duyệt -> Bấm RUN để chuyển sang dạng thẻ tag. 2. Sửa nội dung/ID trực tiếp trong ô Input. 3. Bấm GỬI API ở bên phải để cập nhật.",
+        placeholder: "Dán lệnh cURL (Windows hoặc Bash) vào đây..."
     },
-    "qid_to_id": {
-        text: "<b>Hướng dẫn:</b> Nhập đoạn văn bản chứa các tag <code>[QID:ID]</code>. Công cụ sẽ trích xuất và trả về danh sách chỉ gồm các con số ID.",
-        placeholder: "Ví dụ:\n[QID:10293]\nCâu hỏi này có mã [QID:48291]"
-    },
-    "wordCount": {
-        text: "<b>Hướng dẫn:</b> Nhập mã HTML chứa dữ liệu, sau đó gõ <code>###</code>, và cuối cùng dán danh sách ID cần kiểm tra (mỗi ID 1 dòng).",
-        placeholder: "Ví dụ:\n<div id=\"ID: 123\">... Xem giải (5)</div>\n###\n123\n456"
-    },
-    "sort": {
-        text: "<b>Hướng dẫn:</b> Nhập mã đề (ví dụ: <code>ct-n1-20231-01</code>). Các mã cách nhau bởi khoảng trắng/xuống dòng. Kết thúc danh sách bằng ký tự <code>#</code>.",
-        placeholder: "Ví dụ:\nct-n1-20231-01\nds-g1-20222-05\n#"
-    },
-    "qV": {
-        text: "<b>Hướng dẫn:</b> Nhập văn bản thô. Tự động nhận diện 'Bài' hoặc các mục a), b) để tách thành định dạng 'Câu 1:', 'Câu 2:'. Gõ <code>***</code> ở cuối để dừng thuật toán.",
-        placeholder: "Ví dụ:\nBài 1. Giới thiệu...\na) Câu hỏi phụ 1\nb) Câu hỏi phụ 2\n***"
-    },
-    "md": {
-        text: "<b>Hướng dẫn:</b> Nhập danh sách <code>ID Mức_độ</code> (VD: <i>123 M1</i>). Nếu muốn lọc, gõ <code>#</code> rồi dán danh sách ID cần giữ lại ở bên dưới.",
-        placeholder: "Ví dụ:\n101 M1\n102 M2\n103 M1\n#\n101\n103"
-    }
+    "id_to_qid": { text: "<b>Hướng dẫn:</b> Nhập danh sách ID số.", placeholder: "12345\n67890" },
+    "qid_to_id": { text: "<b>Hướng dẫn:</b> Trích xuất số từ [QID:ID].", placeholder: "[QID:12345]" },
+    "wordCount": { text: "<b>Hướng dẫn:</b> HTML ### List ID.", placeholder: "HTML code\n###\n123" },
+    "sort": { text: "<b>Hướng dẫn:</b> Mã đề kết thúc bằng #.", placeholder: "ct-n1-20231-01\n#" },
+    "qV": { text: "<b>Hướng dẫn:</b> Văn bản thô kết thúc bằng ***.", placeholder: "Bài 1...\n***" },
+    "md": { text: "<b>Hướng dẫn:</b> ID Mức_độ # Filter # Chủ đề.", placeholder: "101 M1 Topic\n#" }
 };
 
 function updateGuide() {
     const func = document.getElementById("functionSelect").value;
     const guideBox = document.getElementById("guideBox");
     const inputBox = document.getElementById("input");
+    const btnSend = document.getElementById("btnSendApi");
+
+    btnSend.style.display = (func === "edit_exam") ? "block" : "none";
 
     if (guides[func]) {
         guideBox.innerHTML = guides[func].text;
         inputBox.placeholder = guides[func].placeholder;
         guideBox.style.display = "block";
-        
-        guideBox.classList.remove("fade-in");
-        void guideBox.offsetWidth; // Trigger reflow
         guideBox.classList.add("fade-in");
-    } else {
-        guideBox.style.display = "none";
-        inputBox.placeholder = "Vui lòng chọn chức năng ở trên để xem hướng dẫn nhập liệu...";
     }
 }
 
 // =========================
-// TẬP HỢP CÁC CHƯƠNG TRÌNH
+// LOGIC SỬA BÀI THI (EXAM EDITOR)
 // =========================
 
-function PhanLoaiMucDo(inputText) {
-    const parts = inputText.split('#');
-    const upperPart = parts[0].trim();   
+function parseCurlToEditor(rawCurl) {
+    const cleanCurl = rawCurl.replace(/\^\r?\n/g, '').replace(/\^/g, '');
     
-    let filterPart = null;
-    let mainTopic = "";
+    // Tách URL & Token
+    const urlMatch = cleanCurl.match(/curl\s+["']?([^"'\s]+)/);
+    const authMatch = cleanCurl.match(/authorization:\s*Bearer\s*([^"']+)/i);
+    if (urlMatch) globalContext.url = urlMatch[1];
+    if (authMatch) globalContext.token = authMatch[1].trim();
 
-    // Xác định Filter và Chủ đề chính dựa trên số lượng dấu #
-    if (parts.length === 3) {
-        // Trường hợp có cả Filter và Chủ đề chính: Data # Filter # Chủ đề
-        filterPart = parts[1].trim();
-        mainTopic = parts[2].trim();
-    } else if (parts.length === 2) {
-        // Trường hợp chỉ có 1 dấu #: Data # (Filter hoặc Chủ đề)
-        const part1 = parts[1].trim();
-        // Nếu phần này có nhiều dòng hoặc chỉ chứa toàn số, khả năng cao nó là Filter
-        if (part1.split(/\r?\n/).length > 1 || /^\d+$/.test(part1)) {
-            filterPart = part1;
-        } else {
-            // Nếu là một dòng chữ thông thường, nó là Chủ đề chính
-            mainTopic = part1;
-        }
-    }
+    // Tách JSON
+    const dataMatch = cleanCurl.match(/--data-raw\s+"(.*)"/s) || cleanCurl.match(/-d\s+"(.*)"/s);
+    if (!dataMatch) return "Lỗi: Không tìm thấy dữ liệu JSON trong cURL!";
 
-    let filterSet = null;
-    if (filterPart) {
-        filterSet = new Set(
-            filterPart.split(/\r?\n/).map(x => x.trim()).filter(x => x.length > 0)
-        );
-    }
-
-    const lines = upperPart.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
-    const topicMap = new Map();
-
-    lines.forEach(line => {
-        const match = line.match(/^(\S+)\s+(\S+)\s+(.+)$/);
-        if (!match) return;
-
-        const qid = match[1];
-        const mucDo = match[2];
-        const subTopic = match[3].trim();
-
-        // Ghép Chủ đề chính (nếu có) vào trước Chủ đề con
-        const topic = mainTopic ? `${mainTopic}: ${subTopic}` : subTopic;
-
-        if (filterSet && !filterSet.has(qid)) return;
-
-        if (!topicMap.has(topic)) {
-            topicMap.set(topic, new Map());
-        }
-
-        const levelMap = topicMap.get(topic);
+    try {
+        const jsonStr = dataMatch[1].replace(/\\"/g, '"');
+        const data = JSON.parse(jsonStr);
+        globalContext.exam_id = data.exam_id;
         
-        if (!levelMap.has(mucDo)) {
-            levelMap.set(mucDo, []);
-        }
-        
-        levelMap.get(mucDo).push(qid);
-    });
-
-    let output = "";
-
-    topicMap.forEach((levelMap, topic) => {
-        output += `${topic}\n`;
-
-        const sortedLevels = Array.from(levelMap.keys()).sort((a, b) => {
-            return parseInt(a.substring(1)) - parseInt(b.substring(1));
-        });
-
-        sortedLevels.forEach(level => {
-            const levelNumber = level.substring(1);
-            output += `<part> Mức độ ${levelNumber}\n`;
-            levelMap.get(level).forEach(qid => {
-                output += `[QID:${qid}]\n`;
+        let editorContent = `exam_id: ${data.exam_id}\n\n`;
+        data.questions.forEach(part => {
+            editorContent += `<part> ${part.partTitle}\n`;
+            part.partData.forEach(q => {
+                globalContext.templates[q.id] = q;
+                editorContent += `[QID:${q.id}]\n`;
             });
-            output += `</part>\n\n`;
+            editorContent += `</part>\n\n`;
         });
-    });
-
-    return output.trim();
+        return editorContent;
+    } catch (e) { return "Lỗi Parse JSON: " + e.message; }
 }
 
-function program_id_to_qid(inputText) {
-    const tokens = inputText.trim().split(/\s+/);
-    const numbers = tokens.filter(t => /^-?\d+$/.test(t));
-    return numbers.map(num => `[QID:${num}]`).join("\n");
-}
+async function sendExamUpdate() {
+    const text = document.getElementById("input").value;
+    const outputBox = document.getElementById("output");
+    
+    if (!globalContext.url) return alert("Vui lòng dán cURL và bấm RUN trước!");
 
-function program_qid_to_id(inputText) {
-    const lines = inputText.split(/\r?\n/);
-    let result = [];
-    for (let line of lines) {
-        if (line.trim() === "") continue;
-        let digits = "";
-        for (let c of line) {
-            if (/[0-9]/.test(c)) digits += c;
-        }
-        result.push(digits);
-    }
-    return result.join("\n");
-}
+    try {
+        const examIdMatch = text.match(/exam_id:\s*(\d+)/);
+        const exam_id = examIdMatch ? parseInt(examIdMatch[1]) : globalContext.exam_id;
+        const questions = [];
+        const partRegex = /<part>\s*(.*?)\n([\s\S]*?)<\/part>/g;
+        let match;
 
-function program_wordCount(inputText) {
-    const parts = inputText.split('###');
-    if (parts.length < 2) {
-        return "Lỗi: Không tìm thấy dấu ngăn cách '###' giữa HTML và danh sách ID.";
-    }
-
-    const htmlContent = parts[0];
-    const idListString = parts[1];
-    const dataMap = {};
-    const idRegex = /ID:\s*(\d+)/g;
-    const countRegex = /Xem giải\s*\((\d+)\)/g;
-
-    let idMatch;
-    while ((idMatch = idRegex.exec(htmlContent)) !== null) {
-        const id = parseInt(idMatch[1]);
-        countRegex.lastIndex = idRegex.lastIndex;
-        const countMatch = countRegex.exec(htmlContent);
-
-        if (countMatch) {
-            dataMap[id] = parseInt(countMatch[1]);
-            idRegex.lastIndex = countRegex.lastIndex;
-        } else {
-            break; 
-        }
-    }
-
-    const queryIds = idListString.match(/\d+/g); 
-    if (!queryIds || queryIds.length === 0) {
-        return "Không có ID nào được nhập để kiểm tra.";
-    }
-
-    let resultLog = "";
-    let notSolvedCount = 0;
-    const totalQueries = queryIds.length;
-
-    queryIds.forEach(idStr => {
-        const id = parseInt(idStr);
-        const count = dataMap[id] || 0; 
-        if (count === 0) notSolvedCount++;
-        resultLog += `${id} - ${count}\n`;
-    });
-
-    const solvedCount = totalQueries - notSolvedCount;
-    resultLog += `Đã giải: ${solvedCount}\n`;
-    resultLog += `Chưa giải: ${notSolvedCount}`;
-
-    return resultLog;
-}
-
-function sort(inputText) {
-    const mp = {
-        "ct": "CTTT",
-        "n1": "NN1",
-        "n2": "NN2",
-        "n3": "NN3",
-        "ds": "Đại số",
-        "g1": "Giải tích 1"
-    };
-
-    const tokens = inputText.trim().split(/\s+/);
-    const uniqueData = new Set();
-
-    for (let s of tokens) {
-        if (s === "#") break; 
-        uniqueData.add(s);
-    }
-
-    const sortedData = Array.from(uniqueData).sort();
-
-    const parse = (code) => {
-        const parts = code.split('-');
-        if (parts.length !== 4) return "Mã không hợp lệ: " + code;
-
-        const ct = mp[parts[0]] || parts[0];
-        const mon = mp[parts[1]] || parts[1];
-        const yearRaw = parts[2];
-        const year = yearRaw.slice(0, -1) + "." + yearRaw.slice(-1);
-        const deNum = parseInt(parts[3], 10);
-        const de = "Đề " + deNum;
-
-        return `${ct} - (${mon}) - (Cuối kỳ) ${de} - ${year}`;
-    };
-
-    return sortedData.map(parse).join('\n');
-}
-
-function strokeQuestionV(inputText) {
-    const lines = inputText.split('\n');
-    let topic = "";
-    let num = 1;
-    const results = [];
-
-    for (let rawLine of lines) {
-        let line = rawLine.trimStart().replace(/\r$/, '');
-        if (line === "***") break;
-        if (line.length === 0) continue;
-
-        if (line.startsWith("Bài") || line.startsWith("Exercise")) {
-            const dotPos = line.indexOf('.');
-            if (dotPos !== -1 && dotPos + 1 < line.length) {
-                topic = line.substring(dotPos + 1).trimStart();
-            } else {
-                topic = "";
+        while ((match = partRegex.exec(text)) !== null) {
+            const partTitle = match[1].trim();
+            const partData = [];
+            const qidRegex = /\[QID:(\d+)\]/g;
+            let qMatch;
+            while ((qMatch = qidRegex.exec(match[2])) !== null) {
+                const id = parseInt(qMatch[1]);
+                partData.push(globalContext.templates[id] || { id, type: 4, title: "", description: "<p></p>", answers: [], note: null, level: 1 });
             }
-            continue;
+            questions.push({ partTitle, partData });
         }
 
-        const p = line.indexOf(')');
-        if (p !== -1 && p <= 3) {
-            if (p + 1 < line.length) {
-                line = line.substring(p + 1).trimStart();
-            } else {
-                line = "";
-            }
-        }
+        outputBox.textContent = "🚀 Đang gửi dữ liệu...";
+        const response = await fetch(globalContext.url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${globalContext.token}` },
+            body: JSON.stringify({ exam_id, questions })
+        });
 
-        let out = `Câu ${num}:`;
-        if (topic) out += ` ${topic}`;
-        if (line)  out += ` ${line}`;
-
-        results.push(out);
-        num++;
-    }
-
-    return results.join('\n');
+        const result = await response.json();
+        outputBox.textContent = `TRẠNG THÁI: ${response.status}\n\n` + JSON.stringify(result, null, 4);
+    } catch (err) { outputBox.textContent = "LỖI: " + err.message; }
 }
 
 // =========================
-// CHẠY CHƯƠNG TRÌNH & COPY
+// CHƯƠNG TRÌNH CŨ & ĐIỀU HƯỚNG
 // =========================
+
 function runFunction() {
     const func = document.getElementById("functionSelect").value;
     const input = document.getElementById("input").value;
     let output = "";
 
-    if (!func) {
-        output = "Vui lòng chọn một chức năng trước khi RUN.";
+    if (func === "edit_exam") {
+        const result = parseCurlToEditor(input);
+        document.getElementById("input").value = result; // Chuyển input thành editor
+        output = "--- ĐÃ CHUYỂN SANG CHẾ ĐỘ BIÊN TẬP ---\nHãy sửa các [QID] trong ô Input bên trái, sau đó bấm nút GỬI API màu xanh.";
     } else {
         switch (func) {
-            case "id_to_qid":  output = program_id_to_qid(input); break;
-            case "qid_to_id":  output = program_qid_to_id(input); break;
-            case "wordCount":  output = program_wordCount(input); break;
-            case "sort":       output = sort(input); break;
-            case "qV":         output = strokeQuestionV(input); break;
-            case "md":         output = PhanLoaiMucDo(input); break;
-            default:           output = "Chức năng chưa được cài đặt.";
+            case "id_to_qid": output = program_id_to_qid(input); break;
+            case "qid_to_id": output = program_qid_to_id(input); break;
+            case "wordCount": output = program_wordCount(input); break;
+            case "sort":      output = sort(input); break;
+            case "qV":        output = strokeQuestionV(input); break;
+            case "md":        output = PhanLoaiMucDo(input); break;
         }
     }
-
     document.getElementById("output").textContent = output;
 }
 
-function copyOutput() {
-    const text = document.getElementById("output").textContent;
-    if (!text) {
-        alert("Chưa có kết quả để copy!");
-        return;
+// (Các hàm cũ giữ nguyên)
+function program_id_to_qid(i) { return i.trim().split(/\s+/).filter(t => /^-?\d+$/.test(t)).map(n => `[QID:${n}]`).join("\n"); }
+function program_qid_to_id(i) { return i.split(/\n/).map(l => l.replace(/[^0-9]/g, "")).filter(l => l).join("\n"); }
+function program_wordCount(i) { 
+    const p = i.split('###'); if(p.length<2) return "Thiếu ###";
+    const dataMap = {}; const idR = /ID:\s*(\d+)/g; const cR = /Xem giải\s*\((\d+)\)/g;
+    let m; while((m=idR.exec(p[0]))){ const c=cR.exec(p[0]); if(c) dataMap[m[1]]=c[1]; }
+    return (p[1].match(/\d+/g)||[]).map(id => `${id} - ${dataMap[id]||0}`).join('\n');
+}
+function sort(i) {
+    const mp = {"ct":"CTTT","n1":"NN1","n2":"NN2","n3":"NN3","ds":"Đại số","g1":"Giải tích 1"};
+    return Array.from(new Set(i.trim().split(/\s+/))).filter(s=>s!=="#").sort().map(code => {
+        const p = code.split('-'); if(p.length!==4) return "Lỗi: "+code;
+        return `${mp[p[0]]||p[0]} - (${mp[p[1]]||p[1]}) - Đề ${parseInt(p[3])} - ${p[2].slice(0,-1)}.${p[2].slice(-1)}`;
+    }).join('\n');
+}
+function strokeQuestionV(i) {
+    let t="", n=1, res=[];
+    for(let l of i.split('\n')){
+        let s=l.trim(); if(s==="***") break; if(!s) continue;
+        if(s.startsWith("Bài")){ t=s.split('.')[1]||""; continue; }
+        res.push(`Câu ${n++}: ${t} ${s.includes(')')?s.split(')')[1]:s}`);
     }
-    navigator.clipboard.writeText(text).then(() => {
-        alert("Đã copy vào clipboard!");
-    }).catch(err => {
-        alert("Lỗi khi copy: " + err);
+    return res.join('\n');
+}
+function PhanLoaiMucDo(i) {
+    const p = i.split('#'); const lines = p[0].trim().split('\n');
+    const topicMap = new Map();
+    lines.forEach(l => {
+        const m = l.match(/^(\S+)\s+(\S+)\s+(.+)$/); if(!m) return;
+        const [_, id, md, sub] = m;
+        if(!topicMap.has(sub)) topicMap.set(sub, new Map());
+        const lMap = topicMap.get(sub); if(!lMap.has(md)) lMap.set(md, []);
+        lMap.get(md).push(id);
     });
+    let out = "";
+    topicMap.forEach((lm, top) => {
+        out += `${top}\n`;
+        Array.from(lm.keys()).sort().forEach(lv => {
+            out += `<part> Mức độ ${lv.substring(1)}\n` + lm.get(lv).map(q => `[QID:${q}]`).join('\n') + `\n</part>\n`;
+        });
+    });
+    return out;
 }
 
-// Gọi hàm cập nhật hướng dẫn ban đầu
+function copyOutput() {
+    navigator.clipboard.writeText(document.getElementById("output").textContent).then(() => alert("Đã copy!"));
+}
 window.onload = updateGuide;
 </script>
-
 </body>
 </html>
